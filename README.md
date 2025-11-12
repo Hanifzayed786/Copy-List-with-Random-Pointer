@@ -17,7 +17,7 @@ First, clone all nodes.
 
 Then, link their next and random pointers using the mapping.
 
-🧪 Example Usage
+Example Usage
 # Each element: [value, random_pointer_index]
 test_case = [[7, None], [13, 0], [11, 4], [10, 2], [1, 0]]
 
