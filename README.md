@@ -55,6 +55,6 @@ Run the script and enter a number:
 
 Enter the number of queens: 4
 
-📤 Output Example
+ Output Example
 [['.Q..', '...Q', 'Q...', '..Q.'],
  ['..Q.', 'Q...', '...Q', '.Q..']]
