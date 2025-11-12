@@ -1,66 +1,84 @@
-"""
-Problem: Copy List with Random Pointer
--------------------------------------
-
-A linked list is given where each node contains:
-  - a value (val)
-  - a pointer to the next node (next)
-  - a random pointer (random) that can point to any node in the list or None.
-
-Goal:
-Create a deep copy of this list — meaning all new nodes, with both
-next and random pointers correctly assigned.
-
-Constraints:
-- 0 <= n <= 1000
-- -10^4 <= Node.val <= 10^4
-- Node.random is None or points to some node in the list.
-
-Approach:
-1. For each node, create a copy of it and insert it right next to the original node.
-2. Assign random pointers for the newly created nodes.
-3. Separate the original and copied nodes into two different lists.
-
-Time Complexity: O(n)
-Space Complexity: O(1)
-"""
+from typing import Optional
 
 class Node:
-    def __init__(self, x, next=None, random=None):
+    def __init__(self, x: int, next: 'Node' = None, random: 'Node' = None):
         self.val = int(x)
         self.next = next
         self.random = random
 
+class Solution:
+    def copyRandomList(self, head: 'Optional[Node]') -> 'Optional[Node]':
+        if not head:
+            return None
 
-def copyRandomList(head):
-    if not head:
+        old_to_new_map = {}
+
+        current = head
+        while current:
+            old_to_new_map[current] = Node(current.val)
+            current = current.next
+
+        current = head
+        while current:
+            new_node = old_to_new_map[current]
+            new_node.next = old_to_new_map.get(current.next)
+            new_node.random = old_to_new_map.get(current.random)
+            current = current.next
+
+        return old_to_new_map[head]
+
+def build_list(nodes_data: list) -> Optional[Node]:
+    if not nodes_data:
         return None
 
-    # Step 1: Create new nodes and insert them after each original node
+    nodes = [Node(val) for val, _ in nodes_data]
+
+    for i in range(len(nodes)):
+        if i < len(nodes) - 1:
+            nodes[i].next = nodes[i + 1]
+        
+        random_index = nodes_data[i][1]
+        if random_index is not None:
+            nodes[i].random = nodes[random_index]
+            
+    return nodes[0]
+
+def print_list(head: Optional[Node]):
+    if not head:
+        print("List is empty.")
+        return
+
     current = head
+    node_count = 0
     while current:
-        copy_node = Node(current.val)
-        copy_node.next = current.next
-        current.next = copy_node
-        current = copy_node.next
+        next_val = current.next.val if current.next else "None"
+        random_val = current.random.val if current.random else "None"
+        
+        print(f"  Node {node_count} (Val: {current.val})")
+        print(f"    -> Next:   {next_val}")
+        print(f"    -> Random: {random_val}")
+        
+        current = current.next
+        node_count += 1
 
-    # Step 2: Assign random pointers for the copied nodes
-    current = head
-    while current:
-        if current.random:
-            current.next.random = current.random.next
-        current = current.next.next
+if __name__ == "__main__":
+    
+    test_case = [[7, None], [13, 0], [11, 4], [10, 2], [1, 0]]
 
-    # Step 3: Separate the original list and the copied list
-    original = head
-    copy_head = head.next
-    copy_current = copy_head
-
-    while original:
-        original.next = original.next.next
-        if copy_current.next:
-            copy_current.next = copy_current.next.next
-        original = original.next
-        copy_current = copy_current.next
-
-    return copy_head
+    original_head = build_list(test_case)
+    
+    print("--- Original List ---")
+    print_list(original_head)
+    
+    sol = Solution()
+    copied_head = sol.copyRandomList(original_head)
+    
+    print("\n--- Copied List ---")
+    print_list(copied_head)
+    
+    print("\n--- Verification (Memory IDs) ---")
+    print(f"Original Head ID: {id(original_head)}")
+    print(f"Copied Head ID:   {id(copied_head)}")
+    if original_head:
+        print(f"Original Head.Next ID: {id(original_head.next)}")
+        print(f"Copied Head.Next ID:   {id(copied_head.next)}")
