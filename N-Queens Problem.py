@@ -40,4 +40,5 @@ def solveNQueens(n):
     return result
 
 # Test
-print(solveNQueens(4))
+hanif=int(input("enter the number :")
+print(solveNQueens(hanif))
